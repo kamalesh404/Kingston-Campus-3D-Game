@@ -1,0 +1,196 @@
+package mygame.states;
+
+import org.shaderblowex.filter.MipmapBloomFilter;
+
+import com.capdevon.engine.SimpleAppState;
+import com.jme3.app.Application;
+import com.jme3.audio.AudioData;
+import com.jme3.audio.AudioNode;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.objects.PhysicsBody;
+import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.environment.EnvironmentCamera;
+import com.jme3.environment.LightProbeFactory;
+import com.jme3.light.DirectionalLight;
+import com.jme3.light.LightProbe;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.FXAAFilter;
+import com.jme3.post.filters.LightScatteringFilter;
+import com.jme3.post.ssao.SSAOFilter;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Spatial;
+import com.jme3.shadow.DirectionalLightShadowRenderer;
+import com.jme3.shadow.EdgeFilteringMode;
+import com.jme3.util.SkyFactory;
+import jme3utilities.math.MyMath;
+import jme3utilities.sky.Constants;
+import jme3utilities.sky.SkyControl;
+import jme3utilities.sky.StarsOption;
+import jme3utilities.sky.SunAndStars;
+import jme3utilities.sky.Updater;
+
+/**
+ *
+ * @author capdevon
+ */
+public class SceneAppState extends SimpleAppState {
+
+    private DirectionalLight sun;
+    private DirectionalLightShadowRenderer dlsr;
+    private boolean generateLightProbe = false;
+    private SkyControl skyControl;
+
+    /**
+     * Toggle the SkyControl between day and night.
+     */
+    public void toggleNight() {
+        SunAndStars sns = skyControl.getSunAndStars();
+        float oldHour = sns.getHour();
+        float newHour = MyMath.modulo(oldHour + 12f, Constants.hoursPerDay);
+        sns.setHour(newHour);
+    }
+
+    @Override
+    public void simpleInit() {
+        setupScene();
+        setupLights();
+        setupFilters();
+        setupSkyControl();
+    }
+
+    private void setupSkyBox() {
+        Spatial sky = SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", SkyFactory.EnvMapType.CubeMap);
+        sky.setShadowMode(RenderQueue.ShadowMode.Off);
+        rootNode.attachChild(sky);
+    }
+
+    /**
+     * Add a SkyControl to the root of the main scene and configure it.
+     */
+    private void setupSkyControl() {
+        float cloudFlattening = 0.8f;
+        boolean bottomDome = false;
+        this.skyControl = new SkyControl(
+                assetManager, camera, cloudFlattening, StarsOption.Cube, bottomDome);
+        rootNode.addControl(skyControl);
+        skyControl.setCloudiness(0.8f);
+        skyControl.setCloudsYOffset(0.4f);
+        skyControl.setTopVerticalAngle(1.78f);
+
+        Updater updater = skyControl.getUpdater();
+        //updater.setAmbientLight(ambientLight);
+        updater.setMainLight(sun);
+        updater.addShadowRenderer(dlsr);
+
+        skyControl.setEnabled(true);
+    }
+
+    private void setupScene() {
+        Spatial scene = assetManager.loadModel("Scenes/level_rough.j3o");
+        scene.setName("MainScene");
+        scene.move(0, -5, 0);
+        rootNode.attachChild(scene);
+
+        // a single static rigid body control for the entire scene:
+        CollisionShape shape = CollisionShapeFactory.createMeshShape(scene);
+        RigidBodyControl rbc = new RigidBodyControl(shape, PhysicsBody.massForStatic);
+        scene.addControl(rbc);
+        rbc.setPhysicsSpace(getPhysicsSpace());
+
+        rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        rootNode.setQueueBucket(RenderQueue.Bucket.Opaque);
+
+        /* nature sound - keeps playing in a loop. */
+        AudioNode audio = new AudioNode(assetManager, "Sound/Environment/Nature.ogg", AudioData.DataType.Stream);
+        audio.setLooping(true);
+        audio.setPositional(false);
+        audio.setVolume(2);
+        rootNode.attachChild(audio);
+        audio.play();
+    }
+
+    private void setupLights() {
+        sun = new DirectionalLight();
+        sun.setName("SunLight");
+        sun.setDirection(new Vector3f(-4.9236743f, -1.27054665f, 5.896916f));
+        sun.setColor(ColorRGBA.White);
+        rootNode.addLight(sun);
+
+        if (generateLightProbe) {
+            EnvironmentCamera envCam = new EnvironmentCamera(); // Make an env camera
+            stateManager.attach(envCam);
+            envCam.initialize(stateManager, app); // Manually initialize so we can add a probe before the next update happens
+            LightProbe probe = LightProbeFactory.makeProbe(envCam, rootNode);
+            probe.getArea().setRadius(100); // Set the probe's radius in world units
+            rootNode.addLight(probe);
+
+        } else {
+            // add a PBR probe.
+            Spatial probeModel = assetManager.loadModel("Scenes/defaultProbe.j3o");
+            LightProbe lightProbe = (LightProbe) probeModel.getLocalLightList().get(0);
+            lightProbe.getArea().setRadius(100);
+            rootNode.addLight(lightProbe);
+        }
+    }
+
+    private void setupFilters() {
+        // shadows
+        dlsr = new DirectionalLightShadowRenderer(assetManager, 4_096, 3);
+        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
+        dlsr.setEdgesThickness(5);
+        dlsr.setLight(sun);
+        dlsr.setShadowIntensity(0.65f);
+        viewPort.addProcessor(dlsr);
+
+        LightScatteringFilter lsf = new LightScatteringFilter(sun.getDirection().mult(-300));
+        lsf.setLightDensity(0.5f);
+
+//        BloomFilter bloom = new BloomFilter();
+//        bloom.setExposurePower(55);
+//        bloom.setBloomIntensity(1.0f);
+
+        MipmapBloomFilter bloom = new MipmapBloomFilter(MipmapBloomFilter.Quality.High, MipmapBloomFilter.GlowMode.Scene);
+        bloom.setExposurePower(0.7f);
+        bloom.setBloomIntensity(0.4f, 0.55f);
+
+        SSAOFilter ssao = new SSAOFilter(5f, 10f, 0.8f, 0.70f);
+        ssao.setApproximateNormals(true);
+
+        FXAAFilter fxaa = new FXAAFilter();
+
+        fpp = new FilterPostProcessor(assetManager);
+        fpp.addFilter(lsf);
+        fpp.addFilter(fxaa);
+        viewPort.addProcessor(fpp);
+    }
+
+    private FilterPostProcessor fpp;
+
+    @Override
+    protected void cleanup(Application app) {
+        if (dlsr != null) {
+            viewPort.removeProcessor(dlsr);
+        }
+        if (fpp != null) {
+            viewPort.removeProcessor(fpp);
+        }
+        if (sun != null) {
+            rootNode.removeLight(sun);
+        }
+        if (skyControl != null) {
+            rootNode.removeControl(skyControl);
+        }
+        Spatial mainScene = rootNode.getChild("MainScene");
+        if (mainScene != null) {
+            RigidBodyControl rbc = mainScene.getControl(RigidBodyControl.class);
+            if (rbc != null && getPhysicsSpace() != null) {
+                getPhysicsSpace().remove(rbc);
+            }
+            mainScene.removeFromParent();
+        }
+    }
+
+}
