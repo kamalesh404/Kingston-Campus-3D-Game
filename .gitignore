@@ -1,5 +1,4 @@
-# Large 3D scene files (>100MB, distributed via GitHub Release zip)
-assets/Scenes/City/newclg.glb
+# Large backup files (not needed in repo)
 assets/Scenes/City/newclg.glb.bak
 
 # Build output

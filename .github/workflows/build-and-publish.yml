@@ -1,0 +1,101 @@
+name: Build & Publish Playable Game
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish as GitHub Release'
+        type: boolean
+        default: true
+        required: false
+      release_tag:
+        description: 'Release Tag name (e.g. v1.1 - leave blank to use run number)'
+        type: string
+        default: ''
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Playable Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Checkout LFS Objects
+        run: git lfs pull
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Grant Execute Permissions to Gradle
+        run: |
+          chmod +x gradlew
+          chmod +x play-linux-mac.sh
+
+      - name: Build Fat JAR
+        run: ./gradlew fatJar --no-daemon
+
+      - name: Package Playable Bundle
+        run: |
+          mkdir -p release-bundle
+          cp build/libs/java-city-all.jar release-bundle/Kingston-Campus-3D-Game-all.jar
+          cp play-windows.bat release-bundle/
+          cp play-linux-mac.sh release-bundle/
+          cp README.md release-bundle/
+          cd release-bundle
+          zip -r ../Kingston-Campus-3D-Playable.zip .
+          cd ..
+
+      - name: Upload Artifact (Always Available in Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kingston-Campus-3D-Playable
+          path: Kingston-Campus-3D-Playable.zip
+          retention-days: 30
+
+      - name: Determine Release Tag
+        id: release_info
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.publish_release == true
+        run: |
+          if [ "${{ startsWith(github.ref, 'refs/tags/v') }}" = "true" ]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          elif [ -n "${{ inputs.release_tag }}" ]; then
+            TAG="${{ inputs.release_tag }}"
+          else
+            TAG="v1.0.${{ github.run_number }}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create / Update GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.publish_release == true
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_info.outputs.tag }}
+          name: Kingston Campus 3D - ${{ steps.release_info.outputs.tag }}
+          files: Kingston-Campus-3D-Playable.zip
+          body: |
+            ## 🎮 How to Play
+
+            1. Download **Kingston-Campus-3D-Playable.zip** below
+            2. Extract the zip
+            3. Install [Java 21](https://adoptium.net/) if needed
+            4. Double-click `play-windows.bat` on Windows or run `./play-linux-mac.sh` on Linux/Mac
+
+            ## ✨ Built Automatically via GitHub Actions
+            - Packaged automatically from commit `${{ github.sha }}`
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
