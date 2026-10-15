@@ -1,24 +1,29 @@
 <div align="center">
 
-# 🌍 ECOCITY
+# 🏛️ Kingston Campus 3D - Open World Game
 
-### Java-Powered 3D Sustainable Smart City Simulation
+### Interactive 3D Open World Campus Simulation & Archer Realm
 
-**Explore. Decide. Drive. Impact the City.**
+[![Build & Publish Playable Game](https://github.com/kamalesh404/Kingston-Campus-3D-Game/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/kamalesh404/Kingston-Campus-3D-Game/actions/workflows/build-and-publish.yml)
+[![Download Latest Playable Game](https://img.shields.io/github/v/release/kamalesh404/Kingston-Campus-3D-Game?label=Download%20Game%20%F0%9F%8E%AE&color=success)](https://github.com/kamalesh404/Kingston-Campus-3D-Game/releases/latest)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://adoptium.net/)
+[![jMonkeyEngine](https://img.shields.io/badge/jMonkeyEngine-3.10-blue.svg)](https://jmonkeyengine.org/)
+[![Physics](https://img.shields.io/badge/Physics-Bullet%20(Minie)-red.svg)](https://github.com/stephengold/Minie)
 
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![jMonkeyEngine](https://img.shields.io/badge/jMonkeyEngine-3.6.1-blue.svg)](https://jmonkeyengine.org/)
-[![Physics](https://img.shields.io/badge/Physics-Bullet--jme3-red.svg)](https://github.com/jMonkeyEngine/jmonkeyengine)
-[![Gradle](https://img.shields.io/badge/Build-Gradle--8-brightgreen.svg)](https://gradle.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-![ECOCITY](assets/screenshots/ecocity-hero.png)
+### [🎮 Click Here to Download & Play Latest Release](https://github.com/kamalesh404/Kingston-Campus-3D-Game/releases/latest)
 
 </div>
 
-> Imagine a city where every journey, every vehicle, every infrastructure decision, and every mission changes the environment around you.
+---
 
-ECOCITY turns sustainability from a static concept into an interactive, playable 3D urban simulation.
+## ⚡ Quick Start — How to Play
+
+1. **Download:** Go to [**Releases**](https://github.com/kamalesh404/Kingston-Campus-3D-Game/releases/latest) and download `Kingston-Campus-3D-Playable.zip`.
+2. **Extract:** Unzip the downloaded file.
+3. **Prerequisite:** Make sure [Java 21](https://adoptium.net/) is installed on your computer.
+4. **Launch:**
+   - **Windows:** Double-click `play-windows.bat`
+   - **Linux / macOS:** Run `./play-linux-mac.sh` in terminal
 
 ---
 
