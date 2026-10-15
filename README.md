@@ -12,6 +12,34 @@
 
 ### [🎮 Click Here to Download & Play Latest Release](https://github.com/kamalesh404/Kingston-Campus-3D-Game/releases/latest)
 
+<br/>
+
+<img src="assets/screenshots/campus-main.png" alt="Kingston Campus 3D Main Entrance" width="100%" style="border-radius: 8px;" />
+
+</div>
+
+---
+
+## 📸 In-Game Screenshots
+
+<div align="center">
+
+### 🏫 Main Campus & Exploration
+*Third-person character exploration with real-time minimap radar, HUD coordinates, and dynamic sky.*
+<img src="assets/screenshots/campus-main.png" alt="Campus Main Entrance" width="100%" />
+
+<br/><br/>
+
+### 🚗 Driveable Golf Cart & Physics
+*Raycast suspension physics, vehicle interaction, and campus grounds.*
+<img src="assets/screenshots/golf-cart-vehicle.png" alt="Golf Cart Vehicle" width="100%" />
+
+<br/><br/>
+
+### 🏙️ Rooftop Aerial Vantage View
+*High vantage overview of the 3D campus architecture, foliage, and environment.*
+<img src="assets/screenshots/campus-aerial-view.png" alt="Rooftop Aerial View" width="100%" />
+
 </div>
 
 ---
