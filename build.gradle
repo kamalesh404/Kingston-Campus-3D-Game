@@ -59,3 +59,10 @@ tasks.register('fatJar', Jar) {
         configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
 }
+
+tasks.register('encryptModel', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.javacity.utilities.ModelEncryptorTool'
+    jvmArgs = ['-Xms256m', '-Xmx4096m', '-XX:+UseG1GC']
+}
+

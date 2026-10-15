@@ -1,4 +1,5 @@
-# Large backup files (not needed in repo)
+# Raw unencrypted campus model files (protected as encrypted .pak instead)
+assets/Scenes/City/newclg.glb
 assets/Scenes/City/newclg.glb.bak
 
 # Build output

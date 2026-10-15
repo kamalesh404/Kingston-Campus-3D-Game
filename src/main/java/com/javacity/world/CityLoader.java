@@ -50,14 +50,25 @@ public class CityLoader {
         
         cityModel = null;
         try {
-            cityModel = assetManager.loadModel("Scenes/City/newclg.glb");
-            System.out.println("Loaded Kingston Engineering College model: Scenes/City/newclg.glb");
+            cityModel = com.javacity.utilities.AssetProtector.loadEncryptedModel(assetManager, "Scenes/City/newclg.pak");
+            if (cityModel != null) {
+                System.out.println("Loaded encrypted Kingston Engineering College model: Scenes/City/newclg.pak");
+            }
         } catch (Exception e) {
-            System.err.println("WARNING: Failed to load newclg.glb, attempting fallback: " + e.getMessage());
+            System.err.println("Encrypted pack not loaded: " + e.getMessage());
+        }
+
+        if (cityModel == null) {
             try {
-                cityModel = assetManager.loadModel("Scenes/City/newclg1.glb");
-            } catch (Exception ex) {
-                cityModel = createTempGround();
+                cityModel = assetManager.loadModel("Scenes/City/newclg.glb");
+                System.out.println("Loaded Kingston Engineering College model: Scenes/City/newclg.glb");
+            } catch (Exception e) {
+                System.err.println("WARNING: Failed to load newclg.glb, attempting fallback: " + e.getMessage());
+                try {
+                    cityModel = assetManager.loadModel("Scenes/City/newclg1.glb");
+                } catch (Exception ex) {
+                    cityModel = createTempGround();
+                }
             }
         }
 
