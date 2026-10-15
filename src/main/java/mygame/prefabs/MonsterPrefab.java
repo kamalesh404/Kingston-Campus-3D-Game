@@ -1,0 +1,126 @@
+package mygame.prefabs;
+
+import com.capdevon.anim.Animator;
+import com.capdevon.engine.GameObject;
+import com.capdevon.engine.PrefabComponent;
+import com.jme3.app.Application;
+import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.animation.DynamicAnimControl;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
+import com.jme3.font.Rectangle;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.control.BillboardControl;
+
+import mygame.AnimDefs;
+import mygame.Main;
+import mygame.ai.AIControl;
+import mygame.controls.Damageable;
+
+/**
+ *
+ * @author capdevon
+ */
+public class MonsterPrefab extends PrefabComponent {
+
+    public boolean usePhysicsCharacter = true;
+    public float radius = 0.9f;
+    public float height = 2f;
+
+    private PhysicsSpace phySpace;
+
+    public MonsterPrefab(Application app) {
+        super(app);
+        this.phySpace = getPhysicsSpace();
+    }
+
+    @Override
+    public Spatial instantiate(Vector3f position, Quaternion rotation, Node parent) {
+
+        Node enemy = (Node) assetManager.loadModel(AnimDefs.Monster.ASSET_PATH);
+        enemy.setName("Monster-" + nextSeqId());
+        enemy.setLocalTranslation(position);
+        enemy.setLocalRotation(rotation);
+        enemy.setLocalScale(1.1f);
+        parent.attachChild(enemy);
+
+        enemy.addControl(new Animator());
+
+        BetterCharacterControl bcc = new BetterCharacterControl(radius, height, 1000f);
+        enemy.addControl(bcc);
+        bcc.setPhysicsSpace(phySpace);
+        bcc.setPhysicsDamping(1f);
+        bcc.setViewDirection(rotation.mult(Vector3f.UNIT_Z));
+
+        DynamicAnimControl ragdoll = GameObject.getComponentInChildren(enemy, DynamicAnimControl.class);
+        ragdoll.setPhysicsSpace(phySpace);
+
+        // The ragdoll and the character control should ignore one another.
+        PhysicsRigidBody bccBody = bcc.getRigidBody();
+        for (PhysicsRigidBody linkBody : ragdoll.listRigidBodies()) {
+            linkBody.addToIgnoreList(bccBody);
+        }
+
+        // The character control should ignore collisions with ammo.
+        bccBody.setCollideWithGroups(Main.BCC_GROUP | Main.DEFAULT_GROUP);
+        bccBody.setCollisionGroup(Main.BCC_GROUP);
+
+        bccBody.setFriction(0f);
+
+        BitmapText hud = createBitmapText(ColorRGBA.Black, "label-placeholder", .1f);
+        hud.setName("Healthbar");
+        hud.setLocalTranslation(0, 2f, 0);
+        enemy.attachChild(hud);
+
+        AIControl aiControl = new AIControl(hud);
+        enemy.addControl(aiControl);
+
+        Damageable m_Damageable = new Damageable();
+        enemy.addControl(m_Damageable);
+
+        return enemy;
+    }
+
+    private BitmapText createBitmapText(ColorRGBA color, String text, float size) {
+        BitmapFont font = assetManager.loadFont("Interface/Fonts/Default.fnt");
+        BitmapText bmp = new BitmapText(font);
+        bmp.setColor(color);
+        bmp.setText(text);
+        bmp.setBox(new Rectangle((-bmp.getLineWidth() / 2) * bmp.getSize(), 0f, bmp.getLineWidth() * bmp.getSize(), bmp.getLineHeight()));
+        bmp.setAlignment(BitmapFont.Align.Center);
+        bmp.setShadowMode(ShadowMode.Off);
+        bmp.setQueueBucket(RenderQueue.Bucket.Transparent);
+        bmp.setSize(size);
+        bmp.addControl(new BillboardControl());
+        return bmp;
+    }
+
+    private RigidBodyControl createRigidBody(float radius, float height) {
+
+        CapsuleCollisionShape capsule = new CapsuleCollisionShape(radius, (height - (2 * radius)));
+        CompoundCollisionShape collShape = new CompoundCollisionShape();
+        Vector3f position = new Vector3f(0, (height / 2f), 0);
+        collShape.addChildShape(capsule, position);
+
+        // Setup root motion physics control
+        RigidBodyControl rbc = new RigidBodyControl(collShape);
+        // Kinematic mode must be enabled so character is not influenced by physics
+        rbc.setKinematic(true);
+        // Apply spatial transform to the collision shape
+        rbc.setKinematicSpatial(true);
+
+        return rbc;
+    }
+
+}

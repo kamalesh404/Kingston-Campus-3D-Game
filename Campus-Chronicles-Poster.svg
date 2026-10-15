@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1536" viewBox="0 0 1080 1536">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061426"/><stop offset="1" stop-color="#102d47"/></linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#16d9ff"/><stop offset="1" stop-color="#6af6d1"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="mapclip"><rect x="640" y="0" width="440" height="1536" rx="0"/></clipPath>
+  </defs>
+  <rect width="1080" height="1536" fill="url(#bg)"/>
+  <rect x="640" width="440" height="1536" fill="#0a1c2d"/>
+  <image x="640" y="0" width="440" height="1536" preserveAspectRatio="xMidYMid slice" opacity="0.72" clip-path="url(#mapclip)" xlink:href="assets/Textures/Minimap/campus_top.png"/>
+  <rect x="640" width="440" height="1536" fill="#061426" opacity="0.22"/>
+  <path d="M0 1180 C240 1110 390 1210 700 1060" fill="none" stroke="#17dcff" stroke-width="3" opacity=".7" filter="url(#glow)"/>
+  <circle cx="820" cy="1060" r="82" fill="none" stroke="#65f6d1" stroke-width="5" opacity=".8" filter="url(#glow)"/>
+  <circle cx="820" cy="1060" r="46" fill="none" stroke="#16d9ff" stroke-width="2" opacity=".9"/>
+  <text x="80" y="130" fill="#70f5d3" font-family="Arial, sans-serif" font-size="25" font-weight="700" letter-spacing="6">KINGSTON ENGINEERING COLLEGE</text>
+  <text x="80" y="275" fill="white" font-family="Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="2">CAMPUS</text>
+  <text x="80" y="365" fill="url(#cyan)" font-family="Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="2">CHRONICLES</text>
+  <rect x="84" y="412" width="390" height="5" fill="url(#cyan)"/>
+  <text x="84" y="475" fill="white" font-family="Arial, sans-serif" font-size="31" font-weight="500">A Java-Based 3D Open-World Game</text>
+  <text x="84" y="555" fill="#b9d8e7" font-family="Arial, sans-serif" font-size="22">Explore. Decide. Drive. Impact the Campus.</text>
+  <text x="84" y="675" fill="#70f5d3" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="3">PROJECT HIGHLIGHTS</text>
+  <g fill="white" font-family="Arial, sans-serif" font-size="25">
+    <text x="88" y="745">• Realistic Kingston campus world</text>
+    <text x="88" y="805">• Third-person player exploration</text>
+    <text x="88" y="865">• Vehicles, NPCs, police and missions</text>
+    <text x="88" y="925">• Mission portal and interactive objectives</text>
+    <text x="88" y="985">• Sustainability-focused gameplay</text>
+  </g>
+  <rect x="84" y="1100" width="470" height="170" rx="18" fill="#0b2238" stroke="#1cdcff" stroke-width="2"/>
+  <text x="112" y="1155" fill="#70f5d3" font-family="Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="2">TECHNOLOGY</text>
+  <text x="112" y="1210" fill="white" font-family="Arial, sans-serif" font-size="25">Java 21  •  jMonkeyEngine  •  GLB / glTF</text>
+  <text x="112" y="1250" fill="#b9d8e7" font-family="Arial, sans-serif" font-size="22">Interactive 3D simulation and gameplay</text>
+  <text x="80" y="1450" fill="#70f5d3" font-family="Arial, sans-serif" font-size="21" letter-spacing="3">ENTER THE WORLD • BEGIN THE JOURNEY</text>
+  <text x="865" y="1480" fill="white" opacity=".9" font-family="Arial, sans-serif" font-size="18" text-anchor="middle">KINGSTON CAMPUS MAP</text>
+</svg>

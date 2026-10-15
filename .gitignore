@@ -1,0 +1,34 @@
+# Large 3D scene files (>100MB, distributed via GitHub Release zip)
+assets/Scenes/City/newclg.glb
+assets/Scenes/City/newclg.glb.bak
+
+# Build output
+build/
+out/
+
+# Gradle cache
+.gradle/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large release JARs (uploaded as GitHub Releases instead)
+*.jar
+
+# Old checkpoints / zips
+pre-mission-working-checkpoint.zip
+Kingston-Campus-3D-Game.zip
+Kingston-Campus-3D-v1.0-Release.zip
+
+# Embedded external game repos
+.external-archer/
+.external-monkeyzone/
